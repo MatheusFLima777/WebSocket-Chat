@@ -25,7 +25,8 @@ public class TicketController {
     ){
         String token = Optional
                 .ofNullable(authorization)
-                .map(it -> it.replace("Bearer", ""))
+                .filter(it -> it.startsWith("Bearer "))
+                .map(it -> it.substring(7))
                 .orElse("");
 
         String ticket = ticketService.buildAndSaveTicket(token);
