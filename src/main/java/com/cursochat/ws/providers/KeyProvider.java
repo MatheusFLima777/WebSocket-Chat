@@ -1,4 +1,4 @@
-package com.cursochat.ws.providersTest;
+package com.cursochat.ws.providers;
 
 import java.security.PublicKey;
 

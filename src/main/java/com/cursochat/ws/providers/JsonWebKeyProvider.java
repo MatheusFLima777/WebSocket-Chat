@@ -1,4 +1,4 @@
-package com.cursochat.ws.providersTest;
+package com.cursochat.ws.providers;
 
 import com.auth0.jwk.Jwk;
 import com.auth0.jwk.JwkException;
@@ -14,7 +14,7 @@ import java.security.PublicKey;
 @Component
 public class JsonWebKeyProvider implements KeyProvider {
 
-    private UrlJwkProvider provider;
+    private final UrlJwkProvider provider;
 
     public JsonWebKeyProvider(@Value("${app.auth.jwks-url}") String jwksUrl) {
         try {

@@ -2,8 +2,6 @@ package com.cursochat.ws.controllers;
 
 
 import com.cursochat.ws.services.TicketService;
-import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,8 +13,12 @@ import java.util.Optional;
 @CrossOrigin
 public class TicketController {
 
-    @Autowired
-    private TicketService ticketService;
+
+    private final TicketService ticketService;
+
+    public TicketController(TicketService ticketService){
+        this.ticketService = ticketService;
+    }
 
     @PostMapping
     public Map<String, String> buildTicket(

@@ -1,9 +1,8 @@
-package com.cursochat.ws.providersTest;
+package com.cursochat.ws.providers;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.security.PublicKey;
@@ -15,8 +14,12 @@ import java.util.Map;
 @Component
 public class JsonWebTokenProvider implements TokenProvider{
 
-    @Autowired
-    private KeyProvider keyProvider;
+
+    private final  KeyProvider keyProvider;
+
+    public JsonWebTokenProvider(KeyProvider keyProvider){
+        this.keyProvider = keyProvider;
+    }
 
     @Override
     public Map<String, String> decode(String token) {
