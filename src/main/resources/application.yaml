@@ -1,11 +1,17 @@
 spring:
-   redis:
-     host:${REDIS_HOST: localhost}
-     port:${REDIS_PORT: 6379}
-   cache:
-     type: redis
-     redis:
-       time-to-live: 600000
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+
+  cache:
+    type: redis
+    redis:
+      time-to-live: 600000
+
+  data:
+    mongodb:
+      uri: ${MONG_DB_URI:mongodb://root:root@localhost:27017/chatDb?authSource=admin}
+      database: ${MONGODB_DATABASE:chatDb}
 
 app:
   auth:

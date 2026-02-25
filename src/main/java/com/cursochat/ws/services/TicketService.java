@@ -18,30 +18,66 @@ public class TicketService {
     private final TokenProvider tokenProvider;
     private final UserRepository userRepository;
 
-    public TicketService(RedisTemplate redisTemplate,
+    public TicketService(RedisTemplate<String, String> redisTemplate,
                          TokenProvider tokenProvider,
-                         UserRepository userRepository){
+                         UserRepository userRepository) {
         this.redisTemplate = redisTemplate;
         this.tokenProvider = tokenProvider;
         this.userRepository = userRepository;
     }
 
-    public String buildAndSaveTicket(String token){
-        if(token == null || token.isBlank()) throw new RuntimeException("Missing Token");
+    public String buildAndSaveTicket(String token) {
+
+        if (token == null || token.isBlank()) {
+            throw new RuntimeException("Missing Token");
+        }
+
         String ticket = UUID.randomUUID().toString();
 
-        Map<String, String> user = tokenProvider.decode(token);
-        String userId = user.get("id");
-        redisTemplate.opsForValue().set(ticket, userId, Duration.ofSeconds(10L));
-        saveUser(user);
+        Map<String, String> claims = tokenProvider.decode(token);
+
+        String userId = claims.get("sub");
+
+        if (userId == null || userId.isBlank()) {
+            throw new RuntimeException("Token does not contain 'sub'");
+        }
+
+        redisTemplate.opsForValue()
+                .set(ticket, userId, Duration.ofMinutes(2));
+
+        saveOrUpdateUser(claims);
+
         return ticket;
     }
 
-    private void saveUser(Map<String, String> user){
-        userRepository.save(new User(user.get("id"), user.get("name"), user.get("picture")));
+    private void saveOrUpdateUser(Map<String, String> claims) {
 
+        String userId = claims.get("sub");
+        String name = claims.getOrDefault("name", "Unknown");
+        String picture = claims.getOrDefault("picture", "");
+
+        Optional<User> existingUser = userRepository.findById(userId);
+
+        if (existingUser.isPresent()) {
+
+            User existing = existingUser.get();
+
+            boolean nameChanged = !java.util.Objects.equals(existing.name(), name);
+            boolean pictureChanged = !java.util.Objects.equals(existing.picture(), picture);
+
+            if (nameChanged || pictureChanged) {
+                User updatedUser = new User(userId, name, picture);
+                userRepository.save(updatedUser);
+            }
+
+        } else {
+            userRepository.save(new User(userId, name, picture));
+        }
     }
-    public Optional<String> getUserIdByTicket(String ticket){
-        return Optional.ofNullable(redisTemplate.opsForValue().getAndDelete(ticket));
+
+    public Optional<String> getUserIdByTicket(String ticket) {
+        return Optional.ofNullable(
+                redisTemplate.opsForValue().getAndDelete(ticket)
+        );
     }
 }

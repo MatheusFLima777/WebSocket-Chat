@@ -23,19 +23,25 @@ public class JsonWebTokenProvider implements TokenProvider{
 
     @Override
     public Map<String, String> decode(String token) {
+
         DecodedJWT jwt = JWT.decode(token);
+
         PublicKey publicKey = keyProvider.getPublicKey(jwt.getKeyId());
         Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) publicKey, null);
         algorithm.verify(jwt);
-        boolean expired = jwt
-                              .getExpiresAtAsInstant()
-                              .atZone(ZoneId.systemDefault())
-                              .isBefore(ZonedDateTime.now());
 
-        if(expired) throw new RuntimeException("Token Expirado!!");
+        boolean expired = jwt
+                .getExpiresAtAsInstant()
+                .atZone(ZoneId.systemDefault())
+                .isBefore(ZonedDateTime.now());
+
+        if (expired) {
+            throw new RuntimeException("Token Expirado!!");
+        }
+
         return Map.of(
-                "id", jwt.getSubject(),
-                "Name", jwt.getClaim("name").asString(),
+                "sub", jwt.getSubject(),                // ← CORRIGIDO
+                "name", jwt.getClaim("name").asString(),
                 "picture", jwt.getClaim("picture").asString()
         );
     }

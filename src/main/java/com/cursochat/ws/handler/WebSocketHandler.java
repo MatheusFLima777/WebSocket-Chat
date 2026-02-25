@@ -133,10 +133,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status){
-        LOGGER.info("[afterConnectionClosed] session id" + session.getId());
-        String userId = userIds.get(session.getId());
-        sessions.remove(userId);
-        userIds.remove(session.getId());
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+        LOGGER.info("[afterConnectionClosed] session id " + session.getId());
+        String userId = userIds.remove(session.getId());
+        if (userId != null) {
+            sessions.remove(userId);
+        }
     }
 }
