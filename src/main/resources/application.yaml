@@ -1,7 +1,10 @@
+server:
+  port: ${PORT:8080}
+
 spring:
   redis:
-    host: ${REDIS_HOST:localhost}
-    port: ${REDIS_PORT:6379}
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
 
   cache:
     type: redis
@@ -10,9 +13,9 @@ spring:
 
   data:
     mongodb:
-      uri: ${MONG_DB_URI:mongodb://root:root@localhost:27017/chatDb?authSource=admin}
+      uri: ${MONG_DB_URI}
       database: ${MONGODB_DATABASE:chatDb}
 
 app:
   auth:
-    jwks-url: https://dev-wbvjopv68bizr1w7.us.auth0.com/.well-known/jwks.json
+    jwks-url: ${JWKS_URL}
