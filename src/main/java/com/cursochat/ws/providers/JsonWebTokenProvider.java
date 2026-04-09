@@ -40,7 +40,7 @@ public class JsonWebTokenProvider implements TokenProvider{
         }
 
         return Map.of(
-                "sub", jwt.getSubject(),                // ← CORRIGIDO
+                "sub", jwt.getSubject(),
                 "name", jwt.getClaim("name").asString(),
                 "picture", jwt.getClaim("picture").asString()
         );
