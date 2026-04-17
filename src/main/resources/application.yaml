@@ -2,18 +2,17 @@ server:
   port: ${PORT:8080}
 
 spring:
-  redis:
-    url: ${REDIS_URL}
+  data:
+    redis:
+      url: ${REDIS_URL}
+    mongodb:
+      uri: ${MONG_DB_URI}
+      database: ${MONGODB_DATABASE:chatDb}
 
   cache:
     type: redis
     redis:
       time-to-live: 600000
-
-  data:
-    mongodb:
-      uri: ${MONG_DB_URI}
-      database: ${MONGODB_DATABASE:chatDb}
 
 app:
   auth:
