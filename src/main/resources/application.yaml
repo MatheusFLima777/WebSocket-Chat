@@ -1,22 +1,20 @@
-# Etapa 1: build
-FROM gradle:8.5-jdk17 AS build
+server:
+  port: ${PORT:8080}
 
-WORKDIR /app
-COPY . .
+spring:
+  redis:
+    url: ${REDIS_URL}
 
-RUN gradle clean build -x test
-  
-  # Etapa 2: runtime
-FROM eclipse-temurin:17-jdk-jammy
+  cache:
+    type: redis
+    redis:
+      time-to-live: 600000
 
-WORKDIR /app
-  
-  # copia exatamente o jar gerado
-COPY --from=build /app/build/libs/*.jar app.jar
-  
-  # Railway usa porta dinâmica
-ENV PORT=8080
+  data:
+    mongodb:
+      uri: ${MONG_DB_URI}
+      database: ${MONGODB_DATABASE:chatDb}
 
-EXPOSE 8080
-
-ENTRYPOINT ["sh", "-c", "java -jar app.jar --server.port=$PORT"]
+app:
+  auth:
+    jwks-url: ${JWKS_URL}

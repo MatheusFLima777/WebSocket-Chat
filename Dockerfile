@@ -4,15 +4,19 @@ FROM gradle:8.5-jdk17 AS build
 WORKDIR /app
 COPY . .
 
-RUN gradle build -x test
+RUN gradle clean build -x test
 
 # Etapa 2: runtime
 FROM eclipse-temurin:17-jdk-jammy
 
 WORKDIR /app
 
+# copia exatamente o jar gerado
 COPY --from=build /app/build/libs/*.jar app.jar
+
+# Railway usa porta dinâmica
+ENV PORT=8080
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["sh", "-c", "java -jar app.jar --server.port=$PORT"]
