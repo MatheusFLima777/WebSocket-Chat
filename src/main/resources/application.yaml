@@ -3,7 +3,8 @@ server:
 
 spring:
   redis:
-    ${REDIS_URL}
+    url: ${REDIS_URL}
+
   cache:
     type: redis
     redis:
